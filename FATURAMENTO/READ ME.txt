@@ -1,0 +1,1 @@
+Script para faturamento automatico usando a API de um sistema ERP "OMIE"
