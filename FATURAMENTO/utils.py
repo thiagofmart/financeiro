@@ -244,47 +244,21 @@ def get_impostos_materiais(empresa, CNPJ, UF_cliente, operacao, base_de_calculo)
         if empresa.upper() == 'CONTRUAR':
             impostos = {
                       "icms_sn": {
-                                  'cod_sit_trib_icms_sn':"400",
+                                  'cod_sit_trib_icms_sn':"102", # 400 -> remessa
                                   'origem_icms_sn':"0",
                                   },
-                      "cofins_padrao":{
-                                      "cod_sit_trib_cofins":"07",
-                                      },
                       "ipi":{
-                              "cod_sit_trib_ipi":"53",
-                              "enquadramento_ipi": "999",
-                             },
+                             "cod_sit_trib_ipi":"53",
+                             "enquadramento_ipi": "999",
+                            },
                       "pis_padrao":{
-                                    "cod_sit_trib_pis":"07",
+                                    "cod_sit_trib_pis":"08",
                                    },
+                      "cofins_padrao":{
+                                      "cod_sit_trib_cofins":"08",
+                                      },
                       },
             retencoes = None
-        elif len(CNPJ) == 11:
-            icms = consult_icms(UF_cliente)
-            impostos = {
-                      "icms": {
-                                  'cod_sit_trib_icms':"00",
-                                  'origem_icms':"0",
-                                  'aliq_icms': icms,
-                                  "modalidade_icms":"3",
-                                  },
-                      "ipi":{
-                              "cod_sit_trib_ipi":"53",
-                              "enquadramento_ipi": "999",
-                             },
-                      "pis_padrao":{
-                                    "cod_sit_trib_pis":"49",
-                                    "tipo_calculo_pis":"B",
-                                    "aliq_pis":0,
-                                   },
-                      "cofins_padrao":{
-                                      "cod_sit_trib_cofins":"49", # OUTRAS OPERAÇÕES
-                                      "tipo_calculo_cofins":"B",
-                                      "aliq_cofins":0
-                                      },
-                      },
-            values = [np.nan, np.nan]
-            retencoes = pd.Series(index=['PIS', 'COFINS'], data=values)
         elif empresa.upper() == 'SOLAR':
             icms = consult_icms(UF_cliente)
             impostos = {
@@ -301,14 +275,14 @@ def get_impostos_materiais(empresa, CNPJ, UF_cliente, operacao, base_de_calculo)
                               "enquadramento_ipi": "999",
                              },
                       "pis_padrao":{
-                                    "cod_sit_trib_pis":"49",
+                                    "cod_sit_trib_pis":"01",
                                     "tipo_calculo_pis":"B",
                                     "aliq_pis":1.65,
                                     "base_pis":base_de_calculo,
                                     "valor_pis":base_de_calculo*(1.65/100)
                                    },
                       "cofins_padrao":{
-                                      "cod_sit_trib_cofins":"49", # OUTRAS OPERAÇÕES
+                                      "cod_sit_trib_cofins":"01",
                                       "tipo_calculo_cofins":"B",
                                       "aliq_cofins":7.6,
                                       "base_cofins":base_de_calculo,
@@ -328,7 +302,7 @@ def get_impostos_materiais(empresa, CNPJ, UF_cliente, operacao, base_de_calculo)
                               "valor_icms":0,
                               },
                   "ipi":{
-                          "cod_sit_trib_ipi":"03",
+                          "cod_sit_trib_ipi":"53", #alterar para 53
                           "enquadramento_ipi": "999",
                          },
                   "pis_padrao":{
@@ -416,12 +390,13 @@ def get_impostos_particularidades(CNPJ, impostos, retencoes):
                     }
         values = [1, np.nan, np.nan, np.nan, np.nan]
         retencoes = pd.Series(index=['INSS', 'PIS', 'COFINS', 'CSLL', 'IR'], data=values)
+                  #VERTE LIMÃO
     elif CNPJ == '15006151000124':
         impostos = {
                     "cRetemINSS": "S",
-                    "cRetemPIS": "N",
-                    "cRetemCOFINS": "N",
-                    "cRetemCSLL": "N",
+                    "cRetemPIS": "S",
+                    "cRetemCOFINS": "S",
+                    "cRetemCSLL": "S",
                     "cRetemIRRF": "N",
                     "nAliqINSS": 11,
                     "nAliqPIS": 0.65,
@@ -430,6 +405,22 @@ def get_impostos_particularidades(CNPJ, impostos, retencoes):
                     "nAliqIRRF": 0,
                     }
         values = [11, 0.65, 3, 1, np.nan]
+        retencoes = pd.Series(index=['INSS', 'PIS', 'COFINS', 'CSLL', 'IR'], data=values)
+                 #FUSSP - FUNDO SOCIAL
+    elif CNPJ == '44111698000198':
+        impostos = {
+                    "cRetemINSS": "N",
+                    "cRetemPIS": "S",
+                    "cRetemCOFINS": "S",
+                    "cRetemCSLL": "S",
+                    "cRetemIRRF": "S",
+                    "nAliqINSS": 0,
+                    "nAliqPIS": 0.65,
+                    "nAliqCOFINS": 3,
+                    "nAliqCSLL": 1,
+                    "nAliqIRRF": 5,
+                    }
+        values = [np.nan, 0.65, 3, 1, 5]
         retencoes = pd.Series(index=['INSS', 'PIS', 'COFINS', 'CSLL', 'IR'], data=values)
     return impostos, retencoes
 
@@ -487,11 +478,11 @@ def get_impostos_servico(empresa, codigo_servico):
 
 def get_API(empresa):
     if empresa.upper() == 'SOLAR':
-        OMIE_APP_KEY = ''
-        OMIE_APP_SECRET = ''
+        OMIE_APP_KEY = '1842612490719'
+        OMIE_APP_SECRET = '9703e43b493ed4e221c8c991abe4c087'
     elif empresa.upper() == 'CONTRUAR':
-        OMIE_APP_KEY = ''
-        OMIE_APP_SECRET = ''
+        OMIE_APP_KEY = '1842673823991'
+        OMIE_APP_SECRET = 'fbb03ec8c37377049b77b0b63390bdfc'
     else:
         return None, None
     return OMIE_APP_KEY, OMIE_APP_SECRET
@@ -973,12 +964,12 @@ def get_Status_OS(nCodOS, empresa):
 
 def get_Nat(operacao):
     if 'REMESSA' in operacao:
-        operacao == 'NOTA FISCAL DE REMESSA'
+        natopr = 'NOTA FISCAL DE REMESSA'
     elif 'VENDA' in operacao:
-        operacao == 'NOTA FISCAL DE VENDA'
+        natopr = 'NOTA FISCAL DE VENDA'
     elif 'DEVOL' in operacao:
-        operacao == 'NOTA FISCAL DE DEVOLUÇÃO'
-    return
+        natopr = 'NOTA FISCAL DE DEVOLUÇÃO'
+    return natopr
 
 def get_nfe(empresa, codigo_pedido):
     endpoint = 'https://app.omie.com.br/api/v1/produtos/nfconsultar/'
@@ -1077,14 +1068,19 @@ def get_cfop(operacao, UF_cliente, ST):
         cfop0='6.'
     if 'VENDA' in operacao:
         if int(ST) == 1:
-            cfop1 = '405'
+            cfop1 = '405'# cpf = "108"
         elif int(ST) == 0:
-            cfop1='102'
+            cfop1='102'# cpf = "108"
     elif operacao == 'REMESSA':
         if int(ST) == 1:
             cfop1 = '415'
         elif int(ST) == 0:
             cfop1 = '949'
+    elif 'DEVOL' in operacao:
+        if int(ST) == 1:
+            cfop = '411'
+        elif int(ST) == 0:
+            cfop = '202'
     else:
         print(f'operacao de nota {operacao} não identificado')
     cfop = cfop0+cfop1

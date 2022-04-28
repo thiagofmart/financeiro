@@ -50,14 +50,18 @@ emails = consult_emails(empresa, CNPJ)#@
     codigo_cliente = get_nCodCli(CNPJ, OMIE_APP_KEY, OMIE_APP_SECRET)#@
     cCodIntPV_df = pd.read_excel(f'./INPUT/ID/IDpedido_de_venda{empresa.upper()}.xlsx', sheet_name=empresa.upper())
     cCodIntPV = cCodIntPV_df.loc[len(cCodIntPV_df)-1, 'ID']+1#@
-    dados_bancarios = consult_banco(empresa, CNPJ)#@
-    Num_CC = dados_bancarios['CC'].values[0]#@
-    nCodCC = get_nCodCC(Num_CC, OMIE_APP_KEY, OMIE_APP_SECRET)#@
+    if 'VENDA' in operacao:
+        dados_bancarios = consult_banco(empresa, CNPJ)#@
+        Num_CC = dados_bancarios['CC'].values[0]#@
+        nCodCC = get_nCodCC(Num_CC, OMIE_APP_KEY, OMIE_APP_SECRET)#@
+    else:
+        nCodCC = get_nCodCC('69024-5', OMIE_APP_KEY, OMIE_APP_SECRET)
     UF_cliente = get_cliente_UF(empresa, CNPJ)
     _, retencoes = get_impostos_materiais(empresa, CNPJ, UF_cliente, operacao, base_de_calculo=0)
     emails = consult_emails(empresa, CNPJ)#@
-    dizeres = generate_dizeres_PV(cabecalho, dizeres_main, cond_pgmt, vencimento, dados_bancarios, retencoes)
-    if 'REMESSA' in operacao:
+    if 'VENDA' in operacao:
+        dizeres = generate_dizeres_PV(cabecalho, dizeres_main, cond_pgmt, vencimento, dados_bancarios, retencoes)
+    elif 'REMESSA' in operacao:
         if type(dizeres_main.OBS) == np.float64 or type(dizeres_main.OBS) == float:
             if math.isnan(dizeres_main.OBS):
                 dizeres=''
@@ -917,3 +921,33 @@ def relatorio_claudenir(mes_n):
 
 def relatorio_gledison(empresa):
     return
+
+################################################################################
+def get_NF_entrada(empresa, nota, fornecedor_CNPJ):
+    OMIE_APP_KEY, OMIE_APP_SECRET = get_API(empresa)
+    endpoint = 'https://app.omie.com.br/api/v1/contador/xml/'
+    payload = {}
+    payload['call'] = 'ListarDocumentos'
+    payload['app_key'] = OMIE_APP_KEY
+    payload['app_secret'] = OMIE_APP_SECRET
+    payload['param'] = [{
+                          "nPagina": 1,
+                          "nRegPorPagina": 50,
+                          "cModelo": "55",
+                          'cOperacao':'0',
+                          "dEmiInicial": "01/03/2022",
+                          "dEmiFinal": "31/12/2022",
+                        }]
+    response = requests.post(endpoint, json=payload).json()
+    pgs = response['nTotPaginas']
+    for pg in range(pg, 0, -1):
+        payload['param'][0]['nPagin']
+        response = requests.post(endpoint, json=payload).json()
+        registros = response['documentosEncontrados']
+        for registro in registros:
+            if registro['nNumero'] == nota:
+                return registro['cXml']
+
+
+def devolver_materiais(empresa, nota, fornecedor_CNPJ, materiais_id):
+    xml_nf = get_NF_entrada(empresa, nota)
