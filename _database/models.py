@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, DateTime, Date, PickleType, LargeBinary
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import EmailType
@@ -15,7 +15,9 @@ class PedidoCompra(Base):
     proposta = Column(Integer)
     cnpj_cpf_fornecedor = Column(Integer)
     tipo = Column(String)
-    itens = Column(JSONB)
+    cond_pgmt = Column(String)
+    itens = Column(PickleType)
+    criacao = Column(Date, default=date.today())
 
 class NotasFiscais(Base):
     __tablename__='notasfiscais'
@@ -34,7 +36,7 @@ class NotasFiscais(Base):
     notas_servicos = relationship('NotasFiscaisServicos', backref='notasfiscais')
     notas_materiais = relationship('NotasFiscaisMateriais', backref='notasfiscais')
 
-class NotasFiscaisServicos(NotasFiscais):
+class NotasFiscaisServicos(Base):
     __tablename__='notasfiscaisservicos'
     id = Column(Integer, primary_key=True, index=True)
     notafiscal_id = Column(Integer, ForeignKey('notasfiscais.id'))
@@ -48,7 +50,7 @@ class NotasFiscaisServicos(NotasFiscais):
 
     entradas = relationship('NFS_Entradas', backref='notasfiscaisservicos')
     saidas = relationship('NFS_Saidas', backref='notasfiscaisservicos')
-class NotasFiscaisMateriais(NotasFiscais):
+class NotasFiscaisMateriais(Base):
     __tablename__ = 'notasfiscaismateriais'
     id = Column(Integer, primary_key=True, index=True)
     notafiscal_id = Column(Integer, ForeignKey('notasfiscais.id'))
@@ -57,12 +59,12 @@ class NotasFiscaisMateriais(NotasFiscais):
     icms = Column(Float)
     pis = Column(Float)
     cofins = Column(Float)
-    materiais = Column(JSONB)
+    materiais = Column(PickleType)
 
     entradas = relationship('NFM_Entradas', backref='notasfiscaismateriais')
     saidas = relationship('NFM_Saidas', backref='notasfiscaismateriais')
 
-class NFS_Entradas(NotasFiscaisServicos):
+class NFS_Entradas(Base):
     __tablename__='nfs_entradas'
     id = Column(Integer, primary_key=True, index=True)
     notafiscalservico_id = Column(Integer, ForeignKey('notasfiscaisservicos.id'))
@@ -75,7 +77,7 @@ class NFS_Entradas(NotasFiscaisServicos):
     tipo = Column(String)
     status = Column(String)
     link = Column(String)
-class NFM_Entradas(NotasFiscaisMateriais):
+class NFM_Entradas(Base):
     __tablename__='nfm_entradas'
     id = Column(Integer, primary_key=True, index=True)
     notafiscalmateriais_id = Column(Integer, ForeignKey('notasfiscaismateriais.id'))
@@ -88,7 +90,7 @@ class NFM_Entradas(NotasFiscaisMateriais):
     status = Column(String)
     classificacao = Column(String)
     xml = Column(LargeBinary)
-class NFS_Saidas(NotasFiscaisServicos):
+class NFS_Saidas(Base):
     __tablename__='nfs_saidas'
     id = Column(Integer, primary_key=True, index=True)
     notafiscalservico_id = Column(Integer, ForeignKey('notasfiscaisservicos.id'))
@@ -101,7 +103,7 @@ class NFS_Saidas(NotasFiscaisServicos):
     tipo = Column(String)
     status = Column(String)
     link = Column(String)
-class NFM_Saidas(NotasFiscaisMateriais):
+class NFM_Saidas(Base):
     __tablename__='nfm_saidas'
     id = Column(Integer, primary_key=True, index=True)
     notafiscalmateriais_id = Column(Integer, ForeignKey('notasfiscaismateriais.id'))
@@ -113,5 +115,3 @@ class NFM_Saidas(NotasFiscaisMateriais):
     tipo = Column(String)
     status = Column(String)
     xml = Column(LargeBinary)
-
-Base.metadata.create_all(engine)

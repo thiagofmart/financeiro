@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import json
 
 
-engine = create_engine("postgresql://postgres:123456@localhost:5433/") #connect_args={"check_same_thread": False}
+engine = create_engine("sqlite:///./_database/financeiro_test.db", connect_args={"check_same_thread": False}) #connect_args={"check_same_thread": False}
 Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
