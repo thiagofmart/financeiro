@@ -1,12 +1,12 @@
 from datetime import datetime, date
-from .database import Session
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import update
 from . import models, schemas, utils
 import json
 
-def create_pedido_compra(db: Session, content: schemas.PedidoCompra):
-    db_pedido = models.PedidoCompra(
-            empresa=content.empresa, solicitante=content.solicitante,
+def create_pedido_compra(db: sessionmaker, content: schemas.PedidoCompra):
+    db_pedido = models.PedidosCompra(
+            solicitante=content.solicitante,
             data_solicitacao=content.data_solicitacao, proposta=content.proposta,
             cnpj_cpf_fornecedor=content.cnpj_cpf_fornecedor, tipo=content.tipo,
             cond_pgmt=content.cond_pgmt, itens=content.itens,

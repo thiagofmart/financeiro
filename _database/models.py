@@ -1,15 +1,15 @@
 from datetime import datetime, date
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, DateTime, Date, PickleType, LargeBinary
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, DateTime, Date, PickleType, LargeBinary, SmallInteger
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import EmailType
 from sqlalchemy.orm import relationship
-from .database import Base, engine
+from .database import Base
 
+    
 
-class PedidoCompra(Base):
-    __tablename__='pedidocompra'
+class PedidosCompra(Base):
+    __tablename__='pedidoscompra'
     id = Column(Integer, primary_key=True, index=True)
-    empresa = Column(String)
     solicitante = Column(String)
     data_solicitacao = Column(Date)
     proposta = Column(Integer)
@@ -22,8 +22,6 @@ class PedidoCompra(Base):
 class NotasFiscais(Base):
     __tablename__='notasfiscais'
     id = Column(Integer, primary_key=True, index=True)
-    remetente = Column(String)
-    cnpj_cpf_r = Column(String)
     numero = Column(Integer, nullable=False)
     emissao = Column(Date)
     destinatario = Column(String)

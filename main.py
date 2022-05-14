@@ -1,29 +1,32 @@
 from _database import schemas, crud, utils
-from _database.database import Session
+from sqlalchemy.orm import sessionmaker
 from datetime import date
 from templates.email_template import Email
 import tools
-
+from constants import empresas
 
 class Compras():
-    def __init__(self):
+    def __init__(self, empresa: str):
+        self.empresa = tools.get_empresa_data(empresa.upper())
+        self.db = empresas[empresa.upper()]
         self.email_conn = Email('smtp.solarar.com.br', 'compras@solarar.com.br', 'Solar@2022')
 
-    def gerar_pedido_compra(self, db: Session, pedido: schemas.PedidoCompra, obs: str|None = None):
+    def gerar_pedido_compra(self, pedido: schemas.PedidoCompra, obs: str|None = None):
         fornecedor_data = tools.get_fornecedor(pedido.cnpj_cpf_fornecedor)
         if not fornecedor_data:
             print('Fornecedor não cadastrado')
             return None
-        db_pedido_compra = crud.create_pedido_compra(db=db, content=pedido)
+        db_pedido_compra = crud.create_pedido_compra(db=self.db, content=pedido)
         if not db_pedido_compra:
             print('Erro ao cadastrar pedido de compra')
             return None
         print('Pedido de Compra cadastrado com sucesso')
         tools.gerar_pdf_pedido_compra(
-                pedido=db_pedido_compra.id, fornecedor='fornecedor',
-                cnpj_cpf=db_pedido_compra.cnpj_cpf_fornecedor,
-                endereco='endereco', itens=db_pedido_compra.itens, obs=obs)
-        tools.enviar_email_pedido_compra(self.email_conn, pedido)
+                db_pedido_compra=db_pedido_compra,
+                fornecedor=fornecedor_data,
+                empresa=self.empresa,
+                )
+        print('Pdf Gerado')
         return db_pedido_compra
     def enviar_pedido_compra(self, pedido_id):
         pass
@@ -31,12 +34,9 @@ class Compras():
 
 if __name__ == '__main__':
     utils._create_database()
-    global db
-    db = utils.get_db()
 
 def test_pedido_compra():
     pedido = schemas.PedidoCompra(
-            empresa='SOLAR',
             solicitante='BRUNO',
             data_solicitacao=date.today(),
             proposta=1,
@@ -60,6 +60,6 @@ def test_pedido_compra():
                     )
                     ]
             )
-    compras = Compras()
+    compras = Compras('SOLAR')
     global db_pedido_compra
-    db_pedido_compra = compras.gerar_pedido_compra(db=db, pedido=pedido)
+    db_pedido_compra = compras.gerar_pedido_compra(pedido=pedido)

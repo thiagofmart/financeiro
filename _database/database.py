@@ -4,7 +4,9 @@ from sqlalchemy.orm import sessionmaker
 import json
 
 
-engine = create_engine("sqlite:///./_database/financeiro_test.db", connect_args={"check_same_thread": False}) #connect_args={"check_same_thread": False}
-Session = sessionmaker(bind=engine)
-session = Session()
+engine_solar = create_engine("sqlite:///./_database/solar.db", connect_args={"check_same_thread": False}) #connect_args={"check_same_thread": False}
+engine_contruar = create_engine("sqlite:///./_database/contruar.db", connect_args={"check_same_thread": False}) #connect_args={"check_same_thread": False}
+SessionSolar = sessionmaker(bind=engine_solar)
+SessionContruar = sessionmaker(bind=engine_solar)
 Base = declarative_base()
+

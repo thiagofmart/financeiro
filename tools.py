@@ -3,6 +3,8 @@ from templates.email_template import Email
 from _database import schemas, crud, utils
 import pandas as pd
 import numpy as np
+from datetime import date
+from constants import SOLAR, CONTRUAR
 
 
 def get_fornecedor(cnpj_cpf: int):
@@ -18,10 +20,11 @@ def get_fornecedor(cnpj_cpf: int):
     emails_dest = select['EMAILS DESTINATÁRIOS'].split(',')
     fornecedor_data = schemas.Fornecedor(
                 status=select['STATUS'], raiz=select['RAIZ'],
-                nome=select['NOME'], cnpj_cpf=cnpj0,
+                nome=select['NOME'], cnpj_cpf=cnpj_cpf0,
                 emails_emi=emails_emi, emails_dest=emails_dest,
                 )
     return fornecedor_data
+
 def cnpj_cpf_to_str(cnpj_cpf: int):
     cnpj_cpf = str(cnpj_cpf)
     if len(cnpj_cpf)==14:
@@ -32,20 +35,17 @@ def cnpj_cpf_to_str(cnpj_cpf: int):
         raise TypeError
     return formated_cnpj_cpf
 
-def gerar_pdf_pedido_compra(db_pedido_compra: schemas.dbPedidoCompra, fornecedor_data, obs: str|None = None):
-    formated_cnpj_cpf = cnpj_cpf_to_str(cnpj_cpf)
+def gerar_pdf_pedido_compra(db_pedido_compra: schemas.dbPedidoCompra, fornecedor: schemas.Fornecedor, empresa: schemas.Empresa, obs: str|None = None):
+    formated_cnpj_cpf = cnpj_cpf_to_str(fornecedor.cnpj_cpf)
     with open('./templates/pedido.html', 'r', encoding="UTF-8") as f_pedido:
-        s_pedido = f_pedido.read()
-        # HEADER
+        html = f_pedido.read()
         if obs:
             obs = f'OBS: <obs>{obs}</obs>'
         else:
             obs = ''
-        s_pedido = s_pedido.replace('{{pedido}}', str(db_pedido_compra.id)).replace('{{fornecedor}}', fornecedor).replace('{{cnpj_cpf}}', formated_cnpj_cpf).replace('{{endereco}}', endereco).replace('{{obs}}', obs)
-        # DATA
         html_data = ''
         total = 0
-        for item in db.pedido_compra.itens:
+        for item in db_pedido_compra.itens:
             html_data = html_data+f"""<tr>
                     <td>{item.descricao}</td>
                     <td>{item.qtd}</td>
@@ -54,11 +54,27 @@ def gerar_pdf_pedido_compra(db_pedido_compra: schemas.dbPedidoCompra, fornecedor
                     <td>R${'{:.2f}'.format(item.total).replace('.', ',')}</td>
                 </tr>"""
             total+=item.total
-        s_pedido = s_pedido.replace('{{itens}}', html_data).replace('{{total}}', '{:.2f}'.format(total).replace('.', ','))
-        # Footer
-        html=s_pedido
+    html = html.replace('{{pedido}}', str(db_pedido_compra.id)
+        ).replace('{{fornecedor_fantasia}}', fornecedor.nome
+        ).replace('{{cnpj_cpf_fornecedor}}', formated_cnpj_cpf
+        ).replace('{{endereco_fornecedor}}', 'endereco temporary'
+        ).replace('{{obs}}', obs
+        ).replace('{{logo}}', empresa.logo
+        ).replace('{{itens}}', html_data
+        ).replace('{{total}}', '{:.2f}'.format(total).replace('.', ',')
+        ).replace('{{empresa}}', empresa.razao_social
+        ).replace('{{IE}}', empresa.ie
+        ).replace('{{IM}}', empresa.im
+        ).replace('{{logradouro}}', f'{empresa.endereco}, {empresa.numero}'
+        ).replace('{{cep}}', empresa.cep
+        ).replace('{{cidade}}', empresa.cidade
+        ).replace('{{uf}}', empresa.uf
+        ).replace('{{telefone}}', empresa.telefone
+        ).replace('{{site}}', (f'<a href="https://{empresa.site}">{empresa.site}</a>' if empresa.site!='' else '')
+        )
 
-    path_wkhtmltopdf = r'.\venv_financeiro\wkhtmltopdf.exe'
+        # Footer
+
     options = {
         'margin-top': '0cm',
         'margin-right': '0cm',
@@ -66,10 +82,10 @@ def gerar_pdf_pedido_compra(db_pedido_compra: schemas.dbPedidoCompra, fornecedor
         'margin-left': '0cm',
         'encoding': "UTF-8",
         }
-    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    config = pdfkit.configuration(wkhtmltopdf=r'.\venv_financeiro\wkhtmltopdf.exe')
     try:
-        pdfkit.from_string(html, f'./output/pc_{pedido}_{datetime.today}.pdf',configuration=config, options=options, css='./templates/style.css')
-    except OSError:
+        pdfkit.from_string(html, f'./output/pc_{db_pedido_compra.id}_{date.today().__str__()}.pdf',configuration=config, options=options, css='./templates/style.css')
+    except OSError as e:
         pass
     print('Arquivo gerado!')
 

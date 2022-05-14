@@ -4,7 +4,6 @@ from datetime import date
 
 _="""
 pedido = schemas.PedidoCompra(
-        empresa='SOLAR',
         solicitante='BRUNO',
         data_solicitacao=date.today(),
         proposta=1,
@@ -28,9 +27,29 @@ pedido = schemas.PedidoCompra(
                 )
                 ]
         )
-compras = Compras()
-db_pedido_compra = compras.gerar_pedido_compra(db=db, pedido=pedido)
+compras = Compras('SOLAR')
+db_pedido_compra = compras.gerar_pedido_compra(pedido=pedido)
+
+
+
 """
+class Empresa(BaseModel):
+    razao_social: str
+    fantasia: str
+    cnpj: str
+    endereco: str
+    numero: str
+    complemento: str
+    bairro: str
+    cidade: str
+    uf: str
+    cep: str
+    telefone: str
+    site: str
+    email: str
+    ie: str #optional
+    im: str #always
+
 class Fornecedor(BaseModel):
     status: str
     raiz: str
@@ -48,7 +67,6 @@ class Item(BaseModel):
 
 
 class PedidoCompra(BaseModel):
-    empresa: str
     solicitante: str
     data_solicitacao: date
     proposta: int
