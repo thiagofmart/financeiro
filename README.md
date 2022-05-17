@@ -11,4 +11,4 @@ Projeto financeiro com as funções (No momento apenas contas a receber)
 - Antecipação de Recebíveis automática;
 
 
-OBS: (PENDENTE DESENVOLVIMENTO PARA CONTAS A PAGAR)
+OBS: (CONTAS A PAGAR ESTÁ EM DESENVOLVIMENTO)
