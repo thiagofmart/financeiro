@@ -33,8 +33,8 @@ def create_pedido_compra(db: sessionmaker, content: schemas.PedidoCompra):
 #         case _:
 #             return []
 #
-# def get_user_by_id(db: Session, id: int):
-#     return db.query(models.Users).filter(models.Users.id==id).first()
+def get_pedido_compra_by_id(db: sessionmaker, id: int):
+    return db.query(models.PedidosCompra).filter(models.PedidosCompra.id==id).first()
 #
 # ################################################################################
 # # UPSERT

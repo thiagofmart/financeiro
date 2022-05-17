@@ -7,8 +7,8 @@ from constants import empresas
 
 class Compras():
     def __init__(self, empresa: str):
-        self.empresa = tools.get_empresa_data(empresa.upper())
-        self.db = empresas[empresa.upper()]
+        self.empresa = empresas[empresa.upper()]
+        self.db = utils.get_db(empresa.upper())
         self.email_conn = Email('smtp.solarar.com.br', 'compras@solarar.com.br', 'Solar@2022')
 
     def gerar_pedido_compra(self, pedido: schemas.PedidoCompra, obs: str|None = None):
@@ -28,14 +28,23 @@ class Compras():
                 )
         print('Pdf Gerado')
         return db_pedido_compra
-    def enviar_pedido_compra(self, pedido_id):
-        pass
+    def enviar_pedido_compra(self, pedido_id, obs=None):
+        db_pedido_compra = crud.get_pedido_compra_by_id(self.db, pedido_id)
+        if not db_pedido_compra:
+            print('Nº de pedido de compra inválido!')
+            return None
+        fornecedor_data = tools.get_fornecedor(db_pedido_compra.cnpj_cpf_fornecedor)
+        if not fornecedor_data:
+            print('Fornecedor não cadastrado')
+            return None
+        tools.enviar_email_pedido_compra(self.email_conn, self.empresa, db_pedido_compra, fornecedor_data, obs)
+        print('E-mail enviado!')
 
 
 if __name__ == '__main__':
     utils._create_database()
 
-def test_pedido_compra():
+def test_pedido_compra(empresa):
     pedido = schemas.PedidoCompra(
             solicitante='BRUNO',
             data_solicitacao=date.today(),
@@ -60,6 +69,6 @@ def test_pedido_compra():
                     )
                     ]
             )
-    compras = Compras('SOLAR')
+    compras = Compras(empresa)
     global db_pedido_compra
     db_pedido_compra = compras.gerar_pedido_compra(pedido=pedido)

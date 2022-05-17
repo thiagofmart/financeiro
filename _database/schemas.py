@@ -47,8 +47,10 @@ class Empresa(BaseModel):
     telefone: str
     site: str
     email: str
+    email_nf: str
     ie: str #optional
     im: str #always
+    logo: str
 
 class Fornecedor(BaseModel):
     status: str

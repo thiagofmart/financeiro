@@ -4,25 +4,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./SOLAR/pdf_PC.css.css">
+    <style>{{style}}</style>
 </head>
-
 <body>
-    <div class="topo">
-      <div class="top-bar"><div class="top-bar-inside"></div></div>
-    </div>
     <div class="container">
         <div class="corpo">
             <div class="info-pedido">
                 <h1>Pedido de Compra - Nº{{pedido}}</h1>
                 <div class="info-fornecedor">
-                    <p>Informações do Fornecedor:</p>
-                    <p>{{fornecedor_fantasia}}</p>
-                    <p>{{cnpj_cpf_fornecedor}} | Endereço: {{endereco_fornecedor}}</p>
+                    <p>Prezado fornecedor {{fornecedor_fantasia}},</p>
+                    <p>Estamos lhe encaminhando o nosso pedido de compra;<br>
+                        Ao emitir a sua nota fiscal garanta que:</p>
                 </div>
                 <div class="aviso">
-
-                    <p>Ao emitir a sua nota fiscal garanta que:
                     <ul>
                         <li>O endereço de e-mail <importante>{{email_nf}}</importante>, <importante>
                                 solarar@nfe.omie.com.br</importante> esteja na relação de destinatários;</li>
@@ -33,9 +27,6 @@
                     {{obs}}
                     </p>
                 </div>
-            </div>
-            <div class="logo">
-                <img src={{logo}} alt="">
             </div>
         </div>
         <div class="tabela-items">
@@ -57,14 +48,22 @@
                 </tr>
             </table>
         </div>
-    </div>
+    </div> 
     <footer>
+        <div class="logo">
+            <img src={{logo}} alt="">
+        </div class="footer_data">
+        <div>
         <h1 class="h1footer">{{empresa}}</h1>
         <p class="pfooter">Inscrição Estadual: {{IE}} | Inscrição Municipal: {{IM}}
 		<br>{{logradouro}} | CEP: {{cep}} | {{cidade}} - {{uf}}
-            <br> Tel: {{telefone}} | Email: {{empresa_email}}
+            <br> Tel: {{telefone}} | Email: compras@solarar.com.br
             <br><a href='https://{{site}}'>{{site}}</a>
         </p>
-    </footer>
+        </div>
+    </footer>  
+    <div class="bot">
+        <div class="bot-bar"><div class="bot-bar-inside"></div></div>
+    </div> 
 </body>
 </html>
