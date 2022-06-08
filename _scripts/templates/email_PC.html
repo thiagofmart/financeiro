@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>$style</style>
+</head>
+<body>
+    <div class="container">
+        <div class="corpo">
+            <div class="info-pedido">
+                <h1>Pedido de Compra - Nº$pedido</h1>
+                <div class="info-fornecedor">
+                    <p>Prezado fornecedor $fornecedor_fantasia,</p>
+                    <p>Estamos lhe encaminhando o nosso pedido de compra;<br>
+                        Ao emitir a sua nota fiscal garanta que:</p>
+                </div>
+                <div class="aviso">
+                    <ul>
+                        <li>O endereço de e-mail <importante>$email_nf</importante> esteja na relação de destinatários;</li>
+                        <li>Na nota fiscal <importante>deverá conter</importante> o número do pedido, vencimento(s) e a
+                            forma de pagamento contendo os dados bancários;
+                        </li>
+                    </ul>
+                    $obs
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="tabela-items">
+            <table>
+                <tr>
+                    <th>DESCRIÇÃO</th>
+                    <th>QTD</th>
+                    <th>UNID</th>
+                    <th>UNITÁRIO</th>
+                    <th>TOTAL</th>
+                </tr>
+                $itens
+                <tr class="total-line">
+                    <th class="total-bar"></th>
+                    <th class="total-bar"></th>
+                    <th class="total-bar"></th>
+                    <th class="total">TOTAL</th>
+                    <th class="total">R$$total</th>
+                </tr>
+            </table>
+        </div>
+    </div> 
+    <footer>
+        <div class="logo">
+            <img src=$logo alt="">
+        </div class="footer_data">
+        <div>
+        <h1 class="h1footer">$empresa</h1>
+        <p class="pfooter">Inscrição Estadual: $IE | Inscrição Municipal: $IM
+		<br>$logradouro | CEP: $cep | $cidade - $uf
+            <br> Tel: $telefone | Email: compras@solarar.com.br
+            <br><a href='https://$site'>$site</a>
+        </p>
+        </div>
+    </footer>  
+    <div class="bot">
+        <div class="bot-bar"><div class="bot-bar-inside"></div></div>
+    </div> 
+</body>
+</html>
