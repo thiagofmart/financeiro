@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import json
 
 user = 'Thiago'
-passw = '3hYK0q7CAmg5boOhWTde'
+passw = ''
 endpoint_write_cluster = 'solardb.cluster-czl3t2lkshwh.us-east-1.rds.amazonaws.com'
 endpoint_write_instance = 'solardb-instance-1.czl3t2lkshwh.us-east-1.rds.amazonaws.com'
 endpoint_read_cluster = 'solardb.cluster-ro-czl3t2lkshwh.us-east-1.rds.amazonaws.com'
