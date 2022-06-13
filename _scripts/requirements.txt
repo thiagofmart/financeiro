@@ -1,6 +1,0 @@
-SQLAlchemy
-sqlalchemy-utils
-pandas
-numpy
-pdfkit
-psycopg2
