@@ -478,11 +478,11 @@ def get_impostos_servico(empresa, codigo_servico):
 
 def get_API(empresa):
     if empresa.upper() == 'SOLAR':
-        OMIE_APP_KEY = '1842612490719'
-        OMIE_APP_SECRET = '9703e43b493ed4e221c8c991abe4c087'
+        OMIE_APP_KEY = '1111'
+        OMIE_APP_SECRET = '1111'
     elif empresa.upper() == 'CONTRUAR':
-        OMIE_APP_KEY = '1842673823991'
-        OMIE_APP_SECRET = 'fbb03ec8c37377049b77b0b63390bdfc'
+        OMIE_APP_KEY = '1111'
+        OMIE_APP_SECRET = '1111'
     else:
         return None, None
     return OMIE_APP_KEY, OMIE_APP_SECRET
