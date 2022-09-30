@@ -9,7 +9,7 @@ class Compras():
     def __init__(self, empresa: str):
         self.empresa = empresas[empresa.upper()]
         self.db = utils.get_db(empresa.upper())
-        self.email_conn = Email('smtp.solarar.com.br', 'compras@solarar.com.br', 'Solar@2022')
+        self.email_conn = Email('smtp.solarar.com.br', 'compras@solarar.com.br', '*****')
 
     def gerar_pedido_compra(self, pedido: schemas.PedidoCompra, obs: str|None = None):
         fornecedor_data = tools.get_fornecedor(pedido.cnpj_cpf_fornecedor)
